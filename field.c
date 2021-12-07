@@ -39,7 +39,7 @@ const char BOTTOM_WALL[][3] = {"--", "\\/"};
 void field_walls_put (field_t *self)
 {
   con_color (yellow);
-  for (int i = 0; i < self->height; ++i)
+  for (unsigned int i = 0; i < self->height; ++i)
     {
       con_xy (self->left - 2, self->top + i);
       con_put_str (LEFT_WALL);
@@ -48,11 +48,11 @@ void field_walls_put (field_t *self)
     }
   con_xy (self->left - 2, self->top + (signed) self->height);
   con_put_str (LEFT_CORNER);
-  for (int x = 0; x < self->width; ++x)
+  for (unsigned int x = 0; x < self->width; ++x)
     con_put_str (BOTTOM_WALL[0]);
   con_put_str (RIGHT_CORNER);
   con_xy (self->left, self->top + (signed) self->height + 1);
-  for (int x = 0; x < self->width; ++x)
+  for (unsigned int x = 0; x < self->width; ++x)
     con_put_str (BOTTOM_WALL[1]);
   con_uncol ();
 }
@@ -85,10 +85,10 @@ static void field_cell_out (field_t *self, unsigned char e)
 void field_put (field_t *self)
 {
   int pos = 0;
-  for (int y = 0; y < self->height; ++y)
+  for (unsigned int y = 0; y < self->height; ++y)
     {
       int cx = -30;
-      for (int x = 0; x < self->width; ++x, ++pos)
+      for (unsigned int x = 0; x < self->width; ++x, ++pos)
         {
           if (self->data[pos] != self->back[pos])
             {
@@ -104,7 +104,7 @@ void field_put (field_t *self)
                       {
                         field_cell_out (self, self->data[pos - x + cx]);
                       }
-                    while (x != ++cx);
+                    while ((signed) x != ++cx);
                   case 0:;
                 }
               field_cell_out (self, self->back[pos] = self->data[pos]);
@@ -123,10 +123,10 @@ void field_refresh (field_t *self)
 }
 
 /* ------------------------------------------------------------------------ */
-void field_row_fill (field_t *self, int y, int value)
+void field_row_fill (field_t *self, unsigned int y, int value)
 {
-  if (y >= 0 && y < self->height)
-    memset (self->data + self->width * (unsigned) y, value,
+  if (y < self->height)
+    memset (self->data + self->width * y, value,
             sizeof (*self->data) * self->width);
 }
 
@@ -137,9 +137,9 @@ void field_fill (field_t *self, int value)
 }
 
 /* ------------------------------------------------------------------------ */
-void field_row_move (field_t *self, int dst, int src)
+void field_row_move (field_t *self, unsigned int dst, unsigned int src)
 {
-  if (dst < 0 || src < 0 || dst >= self->height || src >= self->height)
+  if (dst >= self->height || src >= self->height)
     return;
 
   memcpy (self->data + self->width * (unsigned) dst,
@@ -149,9 +149,9 @@ void field_row_move (field_t *self, int dst, int src)
 }
 
 /* ------------------------------------------------------------------------ */
-int field_row_wiegh (field_t *self, int y)
+unsigned int field_row_wiegh (field_t *self, int y)
 {
-  int c = 0;
+  unsigned int c = 0;
   for (unsigned char *cell = self->data + self->width * (unsigned) y,
                      *end = cell + self->width;
        cell < end; ++cell)
@@ -172,9 +172,9 @@ int field_row_is_full (field_t *self, int y)
 }
 
 /* ------------------------------------------------------------------------ */
-unsigned int field_check_coords (field_t *self, int x, int y)
+unsigned int field_check_coords (field_t *self, unsigned int x, unsigned int y)
 {
-  return 0 <= x && x < self->width && 0 <= y && y < self->height;
+  return x < self->width && y < self->height;
 }
 
 /* ------------------------------------------------------------------------ */
@@ -203,7 +203,7 @@ unsigned int field_get_cell (field_t *self, int x, int y)
 int field_check_detonations (field_t *self)
 {
   int c = 0;
-  for (int y = 0; y < self->height; ++y)
+  for (unsigned int y = 0; y < self->height; ++y)
     c += field_row_is_full (self, y) ? 1 : 0;
   return c;
 }
@@ -212,7 +212,7 @@ int field_check_detonations (field_t *self)
 /* ------------------------------------------------------------------------ */
 void field_detonate (field_t *self, int phase)
 {
-  for (int y = 0; y < self->height; ++y)
+  for (unsigned int y = 0; y < self->height; ++y)
     if (field_row_is_full (self, y))
       field_row_fill (self, y, phase ? 8 : 0);
   field_put (self);

@@ -14,6 +14,8 @@
 #include "io_con.h"
 
 /* -------------------------------------------------------------------------- */
+#define UNUSED(x) (void) x
+
 #define IO_CON_BUFFER_SIZE (0x1000)
 
 /* -------------------------------------------------------------------------- */
@@ -35,6 +37,8 @@ static conout_stream_t *io_con_stream;
 /* -------------------------------------------------------------------------- */
 static void io_con_event_handler (io_stream_t *stream, int events)
 {
+  UNUSED (events);
+
   conout_stream_t *co = (conout_stream_t *) stream;
 
   auto unsigned int po = co->put_ofs, go = co->get_ofs, co_size = co->size;
@@ -109,14 +113,15 @@ static void io_con_free_handler (io_stream_t *stream)
 }
 
 /* -------------------------------------------------------------------------- */
-static void io_con_idle_handler (io_stream_t *stream) {}
+static void io_con_idle_handler (io_stream_t *stream)
+{
+  UNUSED (stream);
+}
 
 /* -------------------------------------------------------------------------- */
-static const io_stream_ops_t io_con_ops = {
-  free : io_con_free_handler,
-  idle : io_con_idle_handler,
-  event : io_con_event_handler
-};
+static const io_stream_ops_t io_con_ops = {io_con_free_handler,
+                                           io_con_idle_handler,
+                                           io_con_event_handler};
 
 /* -------------------------------------------------------------------------- */
 void io_con_init ()
@@ -164,7 +169,7 @@ static int io_con_write (char const *data, size_t size)
   unsigned int po = io_con_stream->put_ofs, go = io_con_stream->get_ofs,
                co_size = io_con_stream->size;
 
-  ssize_t avail = (ssize_t) (po >= go ? size - po + go : go - po);
+  size_t avail = (po >= go ? size - po + go : go - po);
   char *buff = io_con_stream->buffer;
   if (avail < size)
     {
@@ -190,7 +195,7 @@ static int io_con_write (char const *data, size_t size)
       io_con_stream->buffer = buff;
       io_con_stream->size = co_size = new_size;
     }
-  ssize_t tail_size = (ssize_t) (co_size - po);
+  size_t tail_size = co_size - po;
   if (go <= po && tail_size < size)
     {
       memcpy (buff + po, data, (unsigned) tail_size);

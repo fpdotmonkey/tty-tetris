@@ -9,6 +9,9 @@
 
 #include "tetris.h"
 
+
+#define UNUSED(x) (void) x
+
 /* -------------------------------------------------------------------------- */
 static const key_command_t commands[] = {{"\002", KEY_LEFT},
                                          {"\006", KEY_RIGHT},
@@ -58,6 +61,8 @@ static void free_all ()
 /* -------------------------------------------------------------------------- */
 static void main_key_handler (void *self, char const *seq, int code)
 {
+  UNUSED (self);
+  UNUSED (seq);
   if (code == KEY_QUIT)
     exit (0);
 }

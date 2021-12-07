@@ -28,7 +28,7 @@ void io_atexit (void_fn_t *fn)
 /* -------------------------------------------------------------------------- */
 void io_free ()
 {
-  for (int i = 0; i < ae_len; ++i)
+  for (unsigned int i = 0; i < ae_len; ++i)
     at_exits[i]();
 
   con_free ();

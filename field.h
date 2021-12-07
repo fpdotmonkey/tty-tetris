@@ -18,13 +18,13 @@ void field_walls_put (field_t *self);
 void field_put (field_t *self);
 void field_refresh (field_t *self);
 
-void field_row_fill (field_t *self, int y, int value);
+void field_row_fill (field_t *self, unsigned int y, int value);
 void field_fill (field_t *self, int value);
-void field_row_move (field_t *self, int dst, int src);
-int field_row_wiegh (field_t *self, int y);
+void field_row_move (field_t *self, unsigned int dst, unsigned int src);
+unsigned int field_row_wiegh (field_t *self, int y);
 int field_row_is_empty (field_t *self, int y);
 int field_row_is_full (field_t *self, int y);
-unsigned int field_check_coords (field_t *self, int x, int y);
+unsigned int field_check_coords (field_t *self, unsigned int x, unsigned int y);
 
 void field_set_cell (field_t *self, int x, int y, int value);
 unsigned int field_get_cell (field_t *self, int x, int y);

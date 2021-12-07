@@ -8,6 +8,8 @@
 
 #include "io_term.i"
 
+#define UNUSED(x) (void) x
+
 /* -------------------------------------------------------------------------- */
 typedef struct seq_handle seq_handle_t;
 
@@ -108,7 +110,7 @@ static int detect_char_seq (char const *text)
         return 0;
 
       default:
-        if (32 <= ch && ch <= 127)
+        if (32 <= ch)
           return (int) (raw + 1 - text);
     }
 
@@ -145,6 +147,8 @@ static void keyin_seq_handler (char const *seq)
 /* -------------------------------------------------------------------------- */
 static void keyin_event (io_stream_t *stream, int events)
 {
+  UNUSED (events);
+
   key_stream_t *ks = (key_stream_t *) stream;
 
   auto char *data_start = ks->data_start, *data_end = ks->data_end,
@@ -179,15 +183,12 @@ static void keyin_event (io_stream_t *stream, int events)
 /* -------------------------------------------------------------------------- */
 static void keyin_free (io_stream_t *stream)
 {
+  UNUSED (stream);
   term_unraw ();
 }
 
 /* -------------------------------------------------------------------------- */
-static const io_stream_ops_t io_key_ops = {
-  free : keyin_free,
-  idle : NULL,
-  event : keyin_event
-};
+static const io_stream_ops_t io_key_ops = {keyin_free, NULL, keyin_event};
 
 /* -------------------------------------------------------------------------- */
 int io_key_on (seq_handler_t *onseq, void *data)

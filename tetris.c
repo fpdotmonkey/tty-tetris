@@ -5,6 +5,8 @@
 #include "nano/io_key.h"
 #include "tetris.h"
 
+#define UNUSED(x) (void) x
+
 
 #define LEVEL_PERIOD_FACTOR 750  // means .75
 #define GAME_PERIOD 1000
@@ -47,6 +49,8 @@ static void tetris_pause (tetris_t *self)
 /* -------------------------------------------------------------------------- */
 static void tetris_key_handler (void *p, char const *seq, int code)
 {
+  UNUSED (seq);
+
   auto tetris_t *self = (tetris_t *) p;
   if (self->stage != TS_GAMING)
     return;
@@ -124,6 +128,7 @@ void tetris_start (tetris_t *self)
 /* -------------------------------------------------------------------------- */
 static void tetris_gameover (tetris_t *self)
 {
+  UNUSED (self);
   con_xy (1, 20);
   con_put_str ("Game Over!");
   exit (0);

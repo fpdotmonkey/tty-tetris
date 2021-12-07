@@ -7,10 +7,7 @@ option(USE_STDOUT_FOR_IO_CON "Use simplified console output functions" OFF)
 option(USE_SNPRINTF_FOR_IO_CON "Use stdlib snprintf instead of own version" OFF)
 
 add_definitions(-pipe --std=gnu99 -ftabstop=4 -Wno-unused-function)
-add_definitions(-Wall -Wmissing-declarations -Winit-self -Wswitch-enum -Wundef
-                -Wshadow)
-add_definitions(-Wmissing-field-initializers -Wconversion -Wredundant-decls
-                -Wpointer-arith)
+add_definitions(-Wall -Wextra -Wpedantic)
 
 if(USE_STDOUT_FOR_IO_CON)
   add_definitions(-DUSE_STDOUT_FOR_IO_CON)
