@@ -31,9 +31,9 @@ const char BLOCK[] = "[]";
 const char CRACK[] = "**";
 const char LEFT_WALL[] = "<!";
 const char RIGHT_WALL[] = "!>";
-const char LEFT_CORNER[] = "<+";
-const char RIGHT_CORNER[] = "+>";
-const char BOTTOM_WALL[][3] = {"--", "\\/"};
+const char LEFT_CORNER[] = "<!";
+const char RIGHT_CORNER[] = "!>";
+const char BOTTOM_WALL[][3] = {"==", "\\/"};
 
 /* ------------------------------------------------------------------------ */
 void field_walls_put (field_t *self)
