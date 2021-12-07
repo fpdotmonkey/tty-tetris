@@ -70,7 +70,7 @@ static void tetris_key_handler (void *p, char const *seq, int code)
         board_figure_move (&self->game, 0, 0, 1);
         break;
       case KEY_DOWN:
-        board_figure_move (&self->game, 0, 0, -1);
+        board_figure_move (&self->game, 0, 1, 0);
         break;
       case KEY_DROP:
         self->score.score += board_figure_drop (&self->game);
