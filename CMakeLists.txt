@@ -1,38 +1,46 @@
 cmake_minimum_required(VERSION 2.6)
 
-PROJECT(tty-tetris)
+project(tty-tetris)
 
-OPTION(HOST_DEBUG "Log to console" OFF)
-OPTION(USE_STDOUT_FOR_IO_CON "Use simplified console output functions" OFF)
-OPTION(USE_SNPRINTF_FOR_IO_CON "Use stdlib snprintf instead of own version" OFF)
+option(HOST_DEBUG "Log to console" OFF)
+option(USE_STDOUT_FOR_IO_CON "Use simplified console output functions" OFF)
+option(USE_SNPRINTF_FOR_IO_CON "Use stdlib snprintf instead of own version" OFF)
 
-ADD_DEFINITIONS(-pipe --std=gnu99 -ftabstop=4 -Wno-unused-function)
-ADD_DEFINITIONS(-Wall -Wmissing-declarations -Winit-self -Wswitch-enum -Wundef -Wshadow)
-ADD_DEFINITIONS(-Wmissing-field-initializers -Wconversion -Wredundant-decls -Wpointer-arith)
+add_definitions(-pipe --std=gnu99 -ftabstop=4 -Wno-unused-function)
+add_definitions(-Wall -Wmissing-declarations -Winit-self -Wswitch-enum -Wundef
+                -Wshadow)
+add_definitions(-Wmissing-field-initializers -Wconversion -Wredundant-decls
+                -Wpointer-arith)
 
+if(USE_STDOUT_FOR_IO_CON)
+  add_definitions(-DUSE_STDOUT_FOR_IO_CON)
+endif()
 
-IF(USE_STDOUT_FOR_IO_CON)
-	ADD_DEFINITIONS(-DUSE_STDOUT_FOR_IO_CON)
-ENDIF()
+if(USE_SNPRINTF_FOR_IO_CON)
+  add_definitions(-DUSE_SNPRINTF_FOR_IO_CON)
+endif()
 
-IF(USE_SNPRINTF_FOR_IO_CON)
-	ADD_DEFINITIONS(-DUSE_SNPRINTF_FOR_IO_CON)
-ENDIF()
+file(GLOB SOURCES *.c nano/*.c)
 
-FILE(GLOB SOURCES *.c nano/*.c)
+add_executable(tty-tetris ${SOURCES})
 
-ADD_EXECUTABLE(tty-tetris ${SOURCES})
+if(HOST_DEBUG)
+  add_definitions(-O0 -g3)
+else()
+  add_definitions(
+    -Os
+    -Werror
+    -fvisibility=hidden
+    -ffast-math
+    -fmerge-all-constants
+    -ffunction-sections
+    -fdata-sections
+    -s)
+  set_target_properties(tty-tetris PROPERTIES LINK_FLAGS -Wl,--gc-sections)
+endif()
 
-IF(HOST_DEBUG)
-	ADD_DEFINITIONS(-O0 -g3)
-ELSE()
-	ADD_DEFINITIONS(-Os -Werror -fvisibility=hidden -ffast-math -fmerge-all-constants -ffunction-sections -fdata-sections -s)
-	SET_TARGET_PROPERTIES(tty-tetris PROPERTIES LINK_FLAGS -Wl,--gc-sections)
-ENDIF()
-
-
-INSTALL(TARGETS tty-tetris
-	ARCHIVE DESTINATION lib
-	LIBRARY DESTINATION lib
-	RUNTIME DESTINATION bin
-)
+install(
+  TARGETS tty-tetris
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
